@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:front/Home.dart';
 import 'package:front/pages/login/LoginPage.dart';
+import 'package:provider/provider.dart';
+import 'model/userInfo.dart';
+// https://book.flutterchina.club/chapter7/provider.html
 void main() {
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider<UserInfo>.value(
+      value: null,
+      child: MyApp(),
+    )
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -14,10 +23,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      builder: (BuildContext context, Widget child) {
-        return FlutterEasyLoading(
-          child: LoginPage(),
-        );
+      home: FlutterEasyLoading(
+        child: Home(),
+      ),
+      routes: {
+         '/login': (BuildContext context) {
+          return LoginPage();
+        },
       },
     );
   }

@@ -2,9 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:front/pages/const/HttpConst.dart';
-import 'package:front/pages/util/HttpUtil.dart';
+import 'package:front/const/HttpConst.dart';
+import 'package:front/model/userInfo.dart';
+import 'package:front/util/HttpUtil.dart';
 import 'dart:convert' as convert;
+
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -22,9 +25,10 @@ class _LoginPageState extends State<LoginPage> {
     FocusScope.of(context).requestFocus(FocusNode());
     EasyLoading.show(status: '正在登录中');
     String phone = accountController.text;
-    String validateCode = passwordCodeController.text;
-    var response = await post('/login',
-        body: {'account': phone, 'password': validateCode});
+    String password = passwordCodeController.text;
+    var response =
+    await post('/login',
+        body: {'account': phone, 'password': password});
     EasyLoading.dismiss();
     Map<String, dynamic> resp = convert.jsonDecode(response);
     if (resp['code'] == ResponseCode.SUCCESS) {
@@ -35,6 +39,10 @@ class _LoginPageState extends State<LoginPage> {
           backgroundColor: Colors.black,
           textColor: Colors.white,
           fontSize: 16.0);
+    
+      UserInfo account = UserInfo(account:phone);
+      Provider.of<UserInfo>(context).login(account);
+      Navigator.pop(context);
     } else {
       Fluttertoast.showToast(
           msg: resp['msg'],
@@ -46,7 +54,8 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  bool visible = false;
+  bool visible = false; // 密码框是否明文
+  bool isComplete = false; // 账号密码是否输入完成
   GestureTapCallback onTap(){
     setState(() { visible = !visible; });
   }
@@ -55,7 +64,11 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: AppBar(
-          title: Icon(Icons.close, color: Colors.grey,),
+          title: GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Icon(Icons.close, color: Colors.grey,),
+          ),
+          automaticallyImplyLeading:false,
           elevation: 0,
           backgroundColor: Colors.white,
         ),
@@ -77,11 +90,25 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   SizedBox(height: 10),
                   TextField(
+                    onChanged: (text) {
+                      if(text != '' && passwordCodeController.text != ''){
+                        setState(() {
+                          isComplete = true;
+                        });
+                      }else{
+                        setState(() {
+                          isComplete = false;
+                        });
+                      }
+                    } ,
                     autofocus: true,
                     controller: accountController,
                     decoration: InputDecoration(
                         hintText: '请输入账号',
-                        suffixIcon: Icon(Icons.close),
+                        suffixIcon: GestureDetector(
+                          onTap: () => accountController.text = '',
+                          child: Icon(Icons.close),
+                        ),
                         border: InputBorder.none),
                   ),
                   Divider(
@@ -92,6 +119,17 @@ class _LoginPageState extends State<LoginPage> {
                     children: <Widget>[
                       Expanded(
                         child: TextField(
+                          onChanged: (text) {
+                            if(text != '' && accountController.text != ''){
+                              setState(() {
+                                isComplete = true;
+                              });
+                            }else{
+                              setState(() {
+                                isComplete = false;
+                              });
+                            }
+                          } ,
                           controller: passwordCodeController,
                           obscureText: !visible,
                           decoration: InputDecoration(
@@ -114,16 +152,19 @@ class _LoginPageState extends State<LoginPage> {
                   Row(
                     children: <Widget>[
                       Expanded(
-                          child: MaterialButton(
-                        textColor: Colors.white,
-                        color: Colors.blue,
-                        onPressed: () => login(),
-                        child: Text(
-                          '登录',
-                          style:
-                              TextStyle(fontSize: 15, fontFamily: 'ALiHuiPu',letterSpacing:10),
-                        ),
-                      ))
+                        child: MaterialButton(
+                          disabledTextColor: Colors.grey,
+                          disabledColor: Colors.grey[300],
+                          textColor: Colors.white,
+                          color: Colors.blue,
+                          onPressed: isComplete ? () => login() : null,
+                          child: Text(
+                            '登录',
+                            style:
+                                TextStyle(fontSize: 15, fontFamily: 'ALiHuiPu',letterSpacing:10),
+                          ),
+                        )
+                      )
                     ],
                   )
                 ]))));
