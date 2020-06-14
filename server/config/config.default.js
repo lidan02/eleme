@@ -11,7 +11,7 @@ module.exports = appInfo => {
   const config = exports = {};
 
   config.mongoose = {
-    url: 'mongodb://192.168.1.118:27017/kkbhub',
+    url: 'mongodb://192.168.1.118:27017/eleme',
     options: {
       // useMongoClient: true,
       autoReconnect: true,
