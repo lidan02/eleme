@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:http/http.dart' as http;
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:front/pages/const/HttpConst.dart';
+import 'package:front/pages/util/HttpUtil.dart';
+import 'dart:convert' as convert;
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -16,14 +19,30 @@ class _LoginPageState extends State<LoginPage> {
       new TextEditingController();
 
   Future<String> login() async {
-    EasyLoading.show(status: 'loading....');
-    String url = "http://192.168.1.118:7002/login";
+    EasyLoading.show(status: '正在登录中');
     String phone = phoneController.text;
     String validateCode = phoneController.text;
-    var response = await http.post(url, body: {'phone': phone});
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    var response = await post('/login',
+        body: {'phone': phone, 'validateCode': validateCode});
+    Map<String, dynamic> resp = convert.jsonDecode(response);
     EasyLoading.dismiss();
+    if (resp['code'] == ResponseCode.SUCCESS) {
+      Fluttertoast.showToast(
+          msg: resp['msg'],
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else {
+      Fluttertoast.showToast(
+          msg: resp['msg'],
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
   }
 
   @override
@@ -41,7 +60,8 @@ class _LoginPageState extends State<LoginPage> {
                       Expanded(
                         child: Text(
                           '手机号登录',
-                          style: TextStyle(fontSize: 30),
+                          style:
+                              TextStyle(fontSize: 30, fontFamily: 'ALiHuiPu'),
                           textAlign: TextAlign.left,
                         ),
                       ),
@@ -50,13 +70,11 @@ class _LoginPageState extends State<LoginPage> {
                   TextField(
                     autofocus: true,
                     controller: phoneController,
-                    decoration: InputDecoration(
-                        hintText: '请输入手机号', border: InputBorder.none),
+                    decoration: InputDecoration(hintText: '请输入手机号'),
                   ),
                   TextField(
                     controller: validateCodeController,
-                    decoration: InputDecoration(
-                        hintText: '验证码', border: InputBorder.none),
+                    decoration: InputDecoration(hintText: '验证码'),
                   ),
                   Row(
                     children: <Widget>[

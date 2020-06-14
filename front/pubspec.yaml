@@ -25,6 +25,7 @@ dependencies:
     sdk: flutter
   http: ^0.12.1
   flutter_easyloading: ^1.1.4
+  fluttertoast: ^4.0.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -34,6 +35,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -76,3 +78,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  fonts:
+    - family: ALiHuiPu
+      fonts:
+         - asset: assets/fonts/Alibaba-PuHuiTi-Medium.ttf
