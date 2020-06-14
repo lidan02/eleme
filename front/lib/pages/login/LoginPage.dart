@@ -14,18 +14,19 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController phoneController = new TextEditingController();
-  final TextEditingController validateCodeController =
-      new TextEditingController();
+  final TextEditingController accountController = new TextEditingController();
+  final TextEditingController passwordCodeController = new TextEditingController();
+
 
   Future<String> login() async {
+    FocusScope.of(context).requestFocus(FocusNode());
     EasyLoading.show(status: '正在登录中');
-    String phone = phoneController.text;
-    String validateCode = phoneController.text;
+    String phone = accountController.text;
+    String validateCode = passwordCodeController.text;
     var response = await post('/login',
-        body: {'phone': phone, 'validateCode': validateCode});
-    Map<String, dynamic> resp = convert.jsonDecode(response);
+        body: {'account': phone, 'password': validateCode});
     EasyLoading.dismiss();
+    Map<String, dynamic> resp = convert.jsonDecode(response);
     if (resp['code'] == ResponseCode.SUCCESS) {
       Fluttertoast.showToast(
           msg: resp['msg'],
@@ -45,11 +46,18 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  bool visible = false;
+  GestureTapCallback onTap(){
+    setState(() { visible = !visible; });
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: AppBar(
-          title: Icon(Icons.close),
+          title: Icon(Icons.close, color: Colors.grey,),
+          elevation: 0,
+          backgroundColor: Colors.white,
         ),
         body: Container(
             child: Padding(
@@ -59,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                     children: <Widget>[
                       Expanded(
                         child: Text(
-                          '手机号登录',
+                          '账号登录',
                           style:
                               TextStyle(fontSize: 30, fontFamily: 'ALiHuiPu'),
                           textAlign: TextAlign.left,
@@ -67,15 +75,42 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ],
                   ),
+                  SizedBox(height: 10),
                   TextField(
                     autofocus: true,
-                    controller: phoneController,
-                    decoration: InputDecoration(hintText: '请输入手机号'),
+                    controller: accountController,
+                    decoration: InputDecoration(
+                        hintText: '请输入账号',
+                        suffixIcon: Icon(Icons.close),
+                        border: InputBorder.none),
                   ),
-                  TextField(
-                    controller: validateCodeController,
-                    decoration: InputDecoration(hintText: '验证码'),
+                  Divider(
+                    height: 3,
+                    color: Colors.grey,
                   ),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: TextField(
+                          controller: passwordCodeController,
+                          obscureText: !visible,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: '密码',
+                            suffixIcon: new GestureDetector(
+                              onTap: onTap,
+                              child: visible ?Icon(IconData(0xe633, fontFamily:'ALiIcon')):Icon(IconData(0xe634, fontFamily:'ALiIcon')),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Divider(
+                    height: 3,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(height: 30),
                   Row(
                     children: <Widget>[
                       Expanded(
@@ -83,7 +118,11 @@ class _LoginPageState extends State<LoginPage> {
                         textColor: Colors.white,
                         color: Colors.blue,
                         onPressed: () => login(),
-                        child: Text('登录'),
+                        child: Text(
+                          '登录',
+                          style:
+                              TextStyle(fontSize: 15, fontFamily: 'ALiHuiPu',letterSpacing:10),
+                        ),
                       ))
                     ],
                   )

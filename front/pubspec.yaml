@@ -82,3 +82,6 @@ flutter:
     - family: ALiHuiPu
       fonts:
          - asset: assets/fonts/Alibaba-PuHuiTi-Medium.ttf
+    - family: ALiIcon
+      fonts:
+        - asset: assets/icons/iconfont.ttf
