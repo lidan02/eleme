@@ -1,7 +1,5 @@
 /* eslint valid-jsdoc: "off" */
 
-'use strict';
-
 /**
  * @param {Egg.EggAppInfo} appInfo app info
  */
@@ -12,6 +10,15 @@ module.exports = appInfo => {
    **/
   const config = exports = {};
 
+  config.mongoose = {
+    url: 'mongodb://127.0.0.1:27017/kkbhub',
+    options: {
+      // useMongoClient: true,
+      autoReconnect: true,
+      reconnectTries: Number.MAX_VALUE,
+      bufferMaxEntries: 0,
+    },
+  };
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_1592098697483_2316';
 
@@ -22,7 +29,6 @@ module.exports = appInfo => {
   const userConfig = {
     // myAppName: 'egg',
   };
-
   return {
     ...config,
     ...userConfig,
