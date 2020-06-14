@@ -2,12 +2,17 @@ const Service = require('egg').Service;
 
 class UserService extends Service {
   async login(payload) {
-    console.log(payload);
+    console.log('ddddddddddd', payload);
     const { ctx } = this;
-    const { phone } = payload;
-    const res = await this.ctx.model.User.find({ phone });
-    if (!res.length) {
-      await this.ctx.model.User.create({ phone });
+    const { account, password } = payload;
+    // await this.ctx.model.User.create({ account, password });
+    const user = await this.ctx.model.User.findOne({ account });
+    if (!user) {
+      return ctx.helper.error({ ctx, msg: '账号不存在' });
+    }
+    const user2 = await this.ctx.model.User.findOne({ password });
+    if (!user2) {
+      return ctx.helper.error({ ctx, msg: '密码输入错误' });
     }
     ctx.helper.success({ ctx, msg: '登录成功' });
   }

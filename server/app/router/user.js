@@ -2,5 +2,6 @@
  * @param {Egg.Application} app - egg application
  */
 module.exports = app => {
-  require('./router/user')(app);
+  const { router, controller } = app;
+  router.post('/login', controller.user.login);
 };
