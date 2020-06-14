@@ -2,6 +2,7 @@ const moment = require('moment');
 
 // 处理成功响应
 exports.success = ({ ctx, res = null, msg = '处理成功' }) => {
+  console.log(msg);
   ctx.body = {
     code: 0,
     data: res,

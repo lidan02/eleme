@@ -17,7 +17,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<String> login() async {
     EasyLoading.show(status: 'loading....');
-    String url = "http://192.168.1.156:7001/login";
+    String url = "http://192.168.1.118:7002/login";
     String phone = phoneController.text;
     String validateCode = phoneController.text;
     var response = await http.post(url, body: {'phone': phone});
