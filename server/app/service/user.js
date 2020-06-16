@@ -2,7 +2,7 @@ const Service = require('egg').Service;
 
 class UserService extends Service {
   async login(payload) {
-    console.log('ddddddddddd', payload);
+    console.log(payload);
     const { ctx } = this;
     const { account, password } = payload;
     // await this.ctx.model.User.create({ account, password });
